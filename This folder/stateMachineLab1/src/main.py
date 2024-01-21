@@ -57,12 +57,15 @@ class Finite_State_Machine():
         sonar.distance(DistanceUnits.IN)
 
     def __MOVE_handler(self):
+        # if ultrasonic reading is greater than some value, move
         pass
 
     def __RAISE_handler(self):
+        # raise arm up to a height to pick up bucket
         pass
 
     def __END_handler(self):
+        # stop doing everything
         pass
 
 finite_state_machine = Finite_State_Machine() # Starts the state machine
