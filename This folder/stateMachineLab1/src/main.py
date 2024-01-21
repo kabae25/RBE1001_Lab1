@@ -18,18 +18,20 @@
 from vex import *
 
 brain=Brain()
-
+print('test')
 brain.screen.print("Hello V5") # Debug test print
 
 sonar = Sonar(brain.three_wire_port.a)
+
+rightMotor = Motor(Ports.PORT15, False)
+leftMotor = Motor(Ports.PORT11, True)
+armMotor = Motor(Ports.PORT20, True)
 
 class State():
     START = 0
     MOVE = 1
     RAISE = 2
     END = 3
-
-
 
 class Finite_State_Machine():
     def __init__(self) -> None:
@@ -54,18 +56,38 @@ class Finite_State_Machine():
 
     def __START_handler(self):
         print("Program Start")
-        sonar.distance(DistanceUnits.IN)
+        i = 0
+        while i < 5:
+            self.getDistance()
+            i+=1
+
+        armMotor.set_position(0, TURNS)
+        self.current_state = State.MOVE
 
     def __MOVE_handler(self):
         # if ultrasonic reading is greater than some value, move
-        pass
+        if self.getDistance() >= 4.0:
+            rightMotor.spin(DirectionType.FORWARD, 30 * (60.0/12.0), RPM)
+            leftMotor.spin(DirectionType.FORWARD, 30 * (60.0/120.0), RPM)
+        else:
+            rightMotor.stop()
+            leftMotor.stop()
+            
+            self.current_state = State.RAISE
+            
 
     def __RAISE_handler(self):
         # raise arm up to a height to pick up bucket
-        pass
+        print('Ultrasonic Distance: ', sonar.distance(DistanceUnits.IN))
+        armMotor.spin_for(DirectionType.REVERSE, 75 * (60.0/12.0), DEGREES, True)
+        armMotor.stop(BRAKE)
+        self.current_state = State.END
 
     def __END_handler(self):
         # stop doing everything
-        pass
+        print('done')
+
+    def getDistance(self):
+        return sonar.distance(DistanceUnits.IN)
 
 finite_state_machine = Finite_State_Machine() # Starts the state machine
