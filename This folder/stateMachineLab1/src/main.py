@@ -58,7 +58,7 @@ class Finite_State_Machine():
         print("Program Start")
         i = 0
         while i < 5:
-            self.getDistance()
+            print(self.getDistance())
             i+=1
 
         armMotor.set_position(0, TURNS)
